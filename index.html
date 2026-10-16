@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Справочник HTML-тегов</title>
+  <style>
+    @page { size: A4 landscape; margin: 12mm; }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      color: #1f2430;
+      background: #f2f4f8;
+    }
+
+    /* ===== Каркас: боковое меню + контент ===== */
+    .layout { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: #1f3a73;
+      color: #fff;
+      padding: 20px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar h2 { font-size: 18px; margin: 0 0 14px; }
+    .sidebar a {
+      display: block;
+      color: #cfdcff;
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .sidebar a:hover { background: #2d4f9c; color: #fff; }
+    .sidebar .group { margin-top: 14px; font-size: 12px; text-transform: uppercase; color: #8fa8e6; }
+
+    .content { flex: 1; padding: 24px 28px; max-width: 1400px; }
+
+    .intro {
+      background: #fff;
+      border-left: 6px solid #2d6cdf;
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+    .intro h1 { margin: 0 0 8px; }
+
+    h2.section {
+      margin: 36px 0 14px;
+      padding-bottom: 6px;
+      border-bottom: 3px solid #2d6cdf;
+      color: #1f3a73;
+    }
+
+    /* ===== Карточка тега: описание | код | демо ===== */
+    .card {
+      display: grid;
+      grid-template-columns: 220px 1fr 1fr;
+      gap: 0;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      margin-bottom: 14px;
+      overflow: hidden;
+      break-inside: avoid;
+    }
+    .card > div { padding: 14px 16px; }
+
+    .info { background: #eef3ff; }
+    .info .tagname {
+      display: inline-block;
+      font-family: Consolas, monospace;
+      font-weight: bold;
+      font-size: 15px;
+      background: #2d6cdf;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .info .title { font-weight: bold; margin-bottom: 4px; }
+    .info .desc { font-size: 13px; color: #44506b; }
+
+    .code { background: #1e2433; }
+    .code pre {
+      margin: 0;
+      color: #d6e2ff;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .demo { border-left: 1px solid #e1e5ee; }
+    .demo .label, .code .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .code .label { color: #8fa8e6; }
+    .demo .label { color: #7a869f; }
+
+    /* Стили только внутри демонстрации */
+    .render h1, .render h2, .render h3, .render h4, .render h5, .render h6 { margin: 4px 0; }
+    .render p { margin: 6px 0; }
+    .render blockquote {
+      margin: 6px 0;
+      padding: 6px 12px;
+      border-left: 4px solid #2d6cdf;
+      background: #f2f6ff;
+    }
+    .render code { background: #eceff6; padding: 1px 5px; border-radius: 4px; }
+    .render pre { background: #eceff6; padding: 8px; border-radius: 6px; }
+    .render table { border-collapse: collapse; width: 100%; }
+    .render th, .render td { border: 1px solid #9aa4bb; padding: 6px 10px; text-align: left; }
+    .render th { background: #e3ebff; }
+    .render caption { font-weight: bold; margin-bottom: 4px; }
+    .render input[type="text"], .render input[type="password"],
+    .render input[type="email"], .render input[type="date"],
+    .render input[type="number"], .render select, .render textarea {
+      padding: 6px; width: 100%; max-width: 260px;
+    }
+    .render button { padding: 6px 14px; cursor: pointer; }
+    .render label { display: inline-block; margin-bottom: 4px; }
+
+    /* ===== Адаптивность и печать ===== */
+    @media (max-width: 1000px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; }
+      .card { grid-template-columns: 1fr; }
+      .demo { border-left: 0; border-top: 1px solid #e1e5ee; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .sidebar { display: none; }
+      .content { padding: 0; max-width: none; }
+      .card { box-shadow: none; border: 1px solid #ccc; }
+      .code { background: #f4f4f4; }
+      .code pre { color: #000; }
+      .code .label { color: #555; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h2>HTML-теги</h2>
+      <div class="group">Разделы</div>
+      <a href="#text">1. Текст</a>
+      <a href="#lists">2. Списки</a>
+      <a href="#tables">3. Таблицы</a>
+      <a href="#forms">4. Формы и input</a>
+      <div class="group">Подсказка</div>
+      <p style="font-size:12px;color:#cfdcff">
+        Для печати или PDF: Ctrl+P → ориентация «Альбомная».
+      </p>
+    </nav>
+
+    <main class="content">
+      <div class="intro">
+        <h1>Справочник HTML-тегов</h1>
+        <p>
+          У каждого тега три части: <b>описание</b> (слева), <b>код</b> (в центре)
+          и <b>демонстрация</b> (справа), то есть то, как этот код выглядит в браузере.
+          Страница рассчитана на широкий экран и альбомную ориентацию.
+        </p>
+      </div>
+
+      <div id="app"></div>
+    </main>
+  </div>
+
+  <script>
+    // Каждый пример: tag — название, title — что делает, desc — пояснение, code — код (он же и демонстрация)
+    const sections = [
+      {
+        id: 'text', title: '1. Работа с текстом', items: [
+          { tag: '<h1> – <h6>', title: 'Заголовки', desc: 'Шесть уровней: h1 — самый главный, h6 — самый мелкий. На странице обычно один h1.',
+            code: '<h1>Заголовок 1</h1>\n<h2>Заголовок 2</h2>\n<h3>Заголовок 3</h3>\n<h4>Заголовок 4</h4>\n<h5>Заголовок 5</h5>\n<h6>Заголовок 6</h6>' },
+          { tag: '<p>', title: 'Абзац', desc: 'Блок обычного текста. Между абзацами браузер сам делает отступ.',
+            code: '<p>Первый абзац текста.</p>\n<p>Второй абзац текста.</p>' },
+          { tag: '<br>', title: 'Перенос строки', desc: 'Одиночный тег, у него нет закрывающей пары. Переносит текст на новую строку.',
+            code: '<p>Первая строка<br>Вторая строка<br>Третья строка</p>' },
+          { tag: '<hr>', title: 'Горизонтальная линия', desc: 'Одиночный тег. Разделяет части страницы по смыслу.',
+            code: '<p>Текст выше</p>\n<hr>\n<p>Текст ниже</p>' },
+          { tag: '<strong> / <b>', title: 'Жирный текст', desc: '<strong> означает важность по смыслу, <b> — только внешний вид.',
+            code: '<p><strong>Важный</strong> и <b>жирный</b> текст.</p>' },
+          { tag: '<em> / <i>', title: 'Курсив', desc: '<em> — смысловое выделение, <i> — просто курсив.',
+            code: '<p>Это <em>выделенное</em> и <i>курсивное</i> слово.</p>' },
+          { tag: '<u>', title: 'Подчёркивание', desc: 'Подчёркивает текст. Осторожно: похоже на ссылку.',
+            code: '<p>Это <u>подчёркнутый</u> текст.</p>' },
+          { tag: '<del> / <ins>', title: 'Удалено / добавлено', desc: '<del> зачёркивает текст, <ins> подчёркивает вставленный.',
+            code: '<p>Цена: <del>100 000</del> <ins>80 000</ins> сум</p>' },
+          { tag: '<mark>', title: 'Маркер', desc: 'Выделяет текст цветом, как маркером.',
+            code: '<p>Запомни: <mark>HTML — это разметка</mark>.</p>' },
+          { tag: '<small>', title: 'Мелкий текст', desc: 'Уменьшает размер. Подходит для примечаний.',
+            code: '<p>Обычный текст <small>и мелкий текст</small></p>' },
+          { tag: '<sub> / <sup>', title: 'Индексы', desc: '<sub> — нижний индекс, <sup> — верхний.',
+            code: '<p>Формула воды: H<sub>2</sub>O</p>\n<p>Квадрат числа: x<sup>2</sup></p>' },
+          { tag: '<blockquote>', title: 'Длинная цитата', desc: 'Блочная цитата с отступом.',
+            code: '<blockquote>Лучший способ научиться — делать.</blockquote>' },
+          { tag: '<q>', title: 'Короткая цитата', desc: 'Строчная цитата. Браузер сам добавляет кавычки.',
+            code: '<p>Он сказал: <q>Привет, мир!</q></p>' },
+          { tag: '<abbr>', title: 'Аббревиатура', desc: 'Атрибут title показывает расшифровку при наведении мыши.',
+            code: '<p><abbr title="HyperText Markup Language">HTML</abbr> — язык разметки.</p>' },
+          { tag: '<code>', title: 'Строчный код', desc: 'Выводит фрагмент кода моноширинным шрифтом.',
+            code: '<p>Команда: <code>console.log("Привет")</code></p>' },
+          { tag: '<pre>', title: 'Преформатированный текст', desc: 'Сохраняет пробелы и переносы строк как в исходнике.',
+            code: '<pre>\nстрока 1\n    строка 2 с отступом\n        строка 3\n</pre>' },
+          { tag: '<a>', title: 'Ссылка', desc: 'Атрибут href — адрес. target="_blank" открывает ссылку в новой вкладке.',
+            code: '<a href="https://developer.mozilla.org" target="_blank">Открыть MDN</a>' },
+          { tag: '<span>', title: 'Строчный контейнер', desc: 'Нейтральный тег внутри строки. Нужен для стилей и скриптов.',
+            code: '<p>Цвет: <span style="color:red">красный</span> текст.</p>' },
+          { tag: '<div>', title: 'Блочный контейнер', desc: 'Нейтральный блок для группировки элементов.',
+            code: '<div style="border:2px solid #2d6cdf; padding:8px">\n  <p>Содержимое блока div</p>\n</div>' }
+        ]
+      },
+      {
+        id: 'lists', title: '2. Списки', items: [
+          { tag: '<ul> + <li>', title: 'Маркированный список', desc: 'ul — список, li — пункт. Порядок не важен.',
+            code: '<ul>\n  <li>Яблоко</li>\n  <li>Банан</li>\n  <li>Апельсин</li>\n</ul>' },
+          { tag: '<ol> + <li>', title: 'Нумерованный список', desc: 'Порядок важен, пункты нумеруются автоматически.',
+            code: '<ol>\n  <li>Открыть редактор</li>\n  <li>Написать код</li>\n  <li>Открыть в браузере</li>\n</ol>' },
+          { tag: 'type, start', title: 'Вид нумерации', desc: 'type: 1, A, a, I, i. start задаёт начальное число.',
+            code: '<ol type="A">\n  <li>Первый</li>\n  <li>Второй</li>\n</ol>\n<ol type="I" start="5">\n  <li>Пятый</li>\n  <li>Шестой</li>\n</ol>' },
+          { tag: 'вложенные', title: 'Список в списке', desc: 'Внутренний список кладётся внутрь li.',
+            code: '<ul>\n  <li>Фрукты\n    <ul>\n      <li>Яблоко</li>\n      <li>Груша</li>\n    </ul>\n  </li>\n  <li>Овощи</li>\n</ul>' },
+          { tag: '<dl> <dt> <dd>', title: 'Список определений', desc: 'dl — список, dt — термин, dd — описание термина.',
+            code: '<dl>\n  <dt>HTML</dt>\n  <dd>Язык разметки страниц.</dd>\n  <dt>CSS</dt>\n  <dd>Язык стилей.</dd>\n</dl>' }
+        ]
+      },
+      {
+        id: 'tables', title: '3. Таблицы', items: [
+          { tag: '<table> <tr> <th> <td>', title: 'Простая таблица', desc: 'table — таблица, tr — строка, th — ячейка заголовка (жирная), td — обычная ячейка.',
+            code: '<table>\n  <tr>\n    <th>Имя</th>\n    <th>Возраст</th>\n  </tr>\n  <tr>\n    <td>Алишер</td>\n    <td>20</td>\n  </tr>\n  <tr>\n    <td>Мадина</td>\n    <td>22</td>\n  </tr>\n</table>' },
+          { tag: '<caption>', title: 'Подпись таблицы', desc: 'Название таблицы, ставится сразу после <table>.',
+            code: '<table>\n  <caption>Оценки</caption>\n  <tr><th>Студент</th><th>Балл</th></tr>\n  <tr><td>Алишер</td><td>5</td></tr>\n</table>' },
+          { tag: '<thead> <tbody> <tfoot>', title: 'Части таблицы', desc: 'Шапка, тело и подвал. Помогают структурировать большие таблицы.',
+            code: '<table>\n  <thead>\n    <tr><th>Товар</th><th>Цена</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>Книга</td><td>50</td></tr>\n    <tr><td>Ручка</td><td>10</td></tr>\n  </tbody>\n  <tfoot>\n    <tr><td>Итого</td><td>60</td></tr>\n  </tfoot>\n</table>' },
+          { tag: 'colspan', title: 'Объединение по горизонтали', desc: 'Ячейка занимает несколько столбцов.',
+            code: '<table>\n  <tr>\n    <th colspan="2">Расписание</th>\n  </tr>\n  <tr>\n    <td>9:00</td>\n    <td>HTML</td>\n  </tr>\n</table>' },
+          { tag: 'rowspan', title: 'Объединение по вертикали', desc: 'Ячейка занимает несколько строк.',
+            code: '<table>\n  <tr>\n    <td rowspan="2">Понедельник</td>\n    <td>HTML</td>\n  </tr>\n  <tr>\n    <td>CSS</td>\n  </tr>\n</table>' }
+        ]
+      },
+      {
+        id: 'forms', title: '4. Формы и поля ввода (input)', items: [
+          { tag: '<form>', title: 'Форма', desc: 'Контейнер для полей. action — куда отправлять, method — как (get/post).',
+            code: '<form action="#" method="get">\n  <input type="text" name="q">\n  <button type="submit">Найти</button>\n</form>' },
+          { tag: '<label>', title: 'Подпись поля', desc: 'Атрибут for связывает подпись с полем по id. Клик по подписи ставит курсор в поле.',
+            code: '<label for="n1">Ваше имя:</label>\n<input type="text" id="n1">' },
+          { tag: 'type="text"', title: 'Текстовое поле', desc: 'Одна строка текста. placeholder — подсказка внутри пустого поля.',
+            code: '<input type="text" placeholder="Введите имя">' },
+          { tag: 'type="password"', title: 'Пароль', desc: 'Символы скрываются точками.',
+            code: '<input type="password" placeholder="Пароль">' },
+          { tag: 'type="email"', title: 'Почта', desc: 'Проверяет формат адреса при отправке формы.',
+            code: '<form>\n  <input type="email" placeholder="name@mail.com" required>\n  <button>Проверить</button>\n</form>' },
+          { tag: 'type="date"', title: 'Дата', desc: 'Открывает календарь для выбора даты.',
+            code: '<input type="date">' },
+          { tag: 'type="number"', title: 'Число', desc: 'Принимает только числа. min, max, step ограничивают значения.',
+            code: '<input type="number" min="1" max="100" step="1" value="18">' },
+          { tag: 'type="range"', title: 'Ползунок', desc: 'Выбор значения в диапазоне от min до max.',
+            code: '<input type="range" min="0" max="100" value="50">' },
+          { tag: 'type="checkbox"', title: 'Флажок', desc: 'Можно выбрать несколько вариантов. checked — включён по умолчанию.',
+            code: '<label><input type="checkbox"> HTML</label><br>\n<label><input type="checkbox" checked> CSS</label><br>\n<label><input type="checkbox"> JavaScript</label>' },
+          { tag: 'type="radio"', title: 'Переключатель', desc: 'Выбор одного варианта. У группы должен быть одинаковый name.',
+            code: '<label><input type="radio" name="lvl" checked> Начальный</label><br>\n<label><input type="radio" name="lvl"> Средний</label><br>\n<label><input type="radio" name="lvl"> Продвинутый</label>' },
+          { tag: '<select> <option>', title: 'Выпадающий список', desc: 'select — список, option — вариант.',
+            code: '<select>\n  <option>Самарканд</option>\n  <option>Ташкент</option>\n  <option>Бухара</option>\n</select>' },
+          { tag: '<textarea>', title: 'Многострочное поле', desc: 'Для длинного текста. rows и cols задают размер.',
+            code: '<textarea rows="3" cols="30" placeholder="Ваш комментарий"></textarea>' },
+          { tag: '<button>', title: 'Кнопка', desc: 'type: submit — отправить форму, reset — очистить, button — просто кнопка.',
+            code: '<button type="submit">Отправить</button>\n<button type="reset">Очистить</button>' },
+          { tag: 'атрибуты', title: 'Общие атрибуты', desc: 'required — обязательно, disabled — недоступно, readonly — только чтение, value — значение.',
+            code: '<input type="text" required placeholder="Обязательное"><br><br>\n<input type="text" value="Нельзя изменить" readonly><br><br>\n<input type="text" value="Отключено" disabled>' }
+        ]
+      }
+    ];
+
+    const app = document.getElementById('app');
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    sections.forEach(function (sec) {
+      const h = document.createElement('h2');
+      h.className = 'section';
+      h.id = sec.id;
+      h.textContent = sec.title;
+      app.appendChild(h);
+
+      sec.items.forEach(function (it) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML =
+          '<div class="info">' +
+            '<span class="tagname">' + escapeHtml(it.tag) + '</span>' +
+            '<div class="title">' + escapeHtml(it.title) + '</div>' +
+            '<div class="desc">' + escapeHtml(it.desc) + '</div>' +
+          '</div>' +
+          '<div class="code"><div class="label">Код</div><pre>' + escapeHtml(it.code) + '</pre></div>' +
+          '<div class="demo"><div class="label">Результат</div><div class="render">' + it.code + '</div></div>';
+        app.appendChild(card);
+      });
+    });
+
+    // Чтобы демонстрации не перезагружали страницу
+    app.addEventListener('submit', function (e) { e.preventDefault(); });
+    app.addEventListener('click', function (e) {
+      if (e.target.closest('.render a')) e.preventDefault();
+    });
+  </script>
+</body>
+</html>
