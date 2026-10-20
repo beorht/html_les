@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Шпаргалка по Emmet</title>
+  <style>
+    @page { size: A4 landscape; margin: 12mm; }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      color: #1f2430;
+      background: #f2f4f8;
+    }
+
+    /* ===== Каркас: боковое меню + контент ===== */
+    .layout { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: #1f3a73;
+      color: #fff;
+      padding: 20px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar h2 { font-size: 18px; margin: 0 0 14px; }
+    .sidebar a {
+      display: block;
+      color: #cfdcff;
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .sidebar a:hover { background: #2d4f9c; color: #fff; }
+    .sidebar .group { margin-top: 14px; font-size: 12px; text-transform: uppercase; color: #8fa8e6; }
+
+    .content { flex: 1; padding: 24px 28px; max-width: 1400px; }
+
+    .intro {
+      background: #fff;
+      border-left: 6px solid #2d6cdf;
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+    .intro h1 { margin: 0 0 8px; }
+    .intro p { margin: 6px 0; }
+    .intro kbd {
+      font-family: Consolas, monospace;
+      background: #eceff6;
+      border: 1px solid #c5ccdc;
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 0 5px;
+    }
+
+    h2.section {
+      margin: 36px 0 14px;
+      padding-bottom: 6px;
+      border-bottom: 3px solid #2d6cdf;
+      color: #1f3a73;
+    }
+
+    /* ===== Карточка: описание | сокращение | результат ===== */
+    .card {
+      display: grid;
+      grid-template-columns: 220px minmax(200px, 0.8fr) 1.4fr;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      margin-bottom: 14px;
+      overflow: hidden;
+      break-inside: avoid;
+    }
+    .card > div { padding: 14px 16px; }
+
+    .info { background: #eef3ff; }
+    .info .title { font-weight: bold; margin-bottom: 4px; }
+    .info .desc { font-size: 13px; color: #44506b; }
+
+    .abbr { background: #1e2433; }
+    .abbr pre {
+      margin: 0;
+      color: #ffd479;
+      font-family: Consolas, monospace;
+      font-size: 17px;
+      font-weight: bold;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .result { border-left: 1px solid #e1e5ee; }
+    .result pre {
+      margin: 0;
+      color: #1f2430;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .abbr .label { color: #8fa8e6; }
+    .result .label { color: #7a869f; }
+
+    /* ===== Адаптивность и печать ===== */
+    @media (max-width: 1000px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; }
+      .card { grid-template-columns: 1fr; }
+      .result { border-left: 0; border-top: 1px solid #e1e5ee; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .sidebar { display: none; }
+      .content { padding: 0; max-width: none; }
+      .card { box-shadow: none; border: 1px solid #ccc; }
+      .abbr { background: #f4f4f4; }
+      .abbr pre { color: #000; }
+      .abbr .label { color: #555; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h2>Emmet</h2>
+      <div class="group">Разделы</div>
+      <a href="#basics">1. Основы</a>
+      <a href="#operators">2. Операторы</a>
+      <a href="#numbering">3. Нумерация</a>
+      <a href="#text">4. Текст и lorem</a>
+      <a href="#aliases">5. Готовые сокращения</a>
+      <a href="#practice">6. Примеры из практики</a>
+      <a href="#css">7. Emmet в CSS</a>
+      <a href="#vscode">8. Команды VS Code</a>
+      <div class="group">Ещё</div>
+      <a href="index.html">Справочник HTML-тегов</a>
+      <div class="group">Подсказка</div>
+      <p style="font-size:12px;color:#cfdcff">
+        Для печати или PDF: Ctrl+P → ориентация «Альбомная».
+      </p>
+    </nav>
+
+    <main class="content">
+      <div class="intro">
+        <h1>Шпаргалка по Emmet</h1>
+        <p>
+          <b>Emmet</b> — это сокращения, которые редактор разворачивает в готовый код.
+          Он уже встроен в VS Code: напишите сокращение в файле <code>.html</code> или <code>.css</code>
+          и нажмите <kbd>Tab</kbd> или <kbd>Enter</kbd>.
+        </p>
+        <p>
+          У каждого примера три части: <b>описание</b> (слева), <b>сокращение</b>, которое вы пишете (в центре),
+          и <b>результат</b>, который получается (справа).
+        </p>
+        <p>⚠ Главное правило: <b>в сокращении не должно быть пробелов</b>. На пробеле Emmet считает сокращение законченным.</p>
+      </div>
+
+      <div id="app"></div>
+    </main>
+  </div>
+
+  <script>
+    // Каждый пример: title — что делает, desc — пояснение, abbr — сокращение, code — что получится
+    const sections = [
+      {
+        id: 'basics', title: '1. Основы: теги, классы, id, атрибуты', items: [
+          { title: 'Каркас страницы', desc: 'Восклицательный знак (или html:5) создаёт заготовку HTML-документа.',
+            abbr: '!',
+            code: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Document</title>\n</head>\n<body>\n  \n</body>\n</html>' },
+          { title: 'Тег', desc: 'Достаточно написать имя тега без угловых скобок.',
+            abbr: 'p',
+            code: '<p></p>' },
+          { title: 'Класс .', desc: 'Точка добавляет класс. Если тег не указан, получится div.',
+            abbr: '.box',
+            code: '<div class="box"></div>' },
+          { title: 'Тег с классом', desc: 'Сначала тег, затем класс.',
+            abbr: 'p.text',
+            code: '<p class="text"></p>' },
+          { title: 'Несколько классов', desc: 'Классы перечисляются через точку подряд.',
+            abbr: 'div.card.active',
+            code: '<div class="card active"></div>' },
+          { title: 'id #', desc: 'Решётка добавляет id. Можно сочетать с классами.',
+            abbr: 'section#about.wrap',
+            code: '<section id="about" class="wrap"></section>' },
+          { title: 'Атрибуты [ ]', desc: 'Атрибуты пишутся в квадратных скобках через пробел. Внутри скобок пробел допустим.',
+            abbr: 'img[src=cat.jpg alt="Кот"]',
+            code: '<img src="cat.jpg" alt="Кот">' },
+          { title: 'Атрибут без значения', desc: 'Достаточно написать имя атрибута.',
+            abbr: 'input[required]',
+            code: '<input type="text" required>' },
+          { title: 'Умный тег', desc: 'Без имени тега Emmet подбирает подходящий родителю: в ul — li, в table — tr и td, в select — option.',
+            abbr: 'ul>.item',
+            code: '<ul>\n  <li class="item"></li>\n</ul>' }
+        ]
+      },
+      {
+        id: 'operators', title: '2. Операторы: вложенность и повторение', items: [
+          { title: 'Вложение >', desc: 'Следующий тег кладётся внутрь предыдущего.',
+            abbr: 'nav>ul>li',
+            code: '<nav>\n  <ul>\n    <li></li>\n  </ul>\n</nav>' },
+          { title: 'Соседи +', desc: 'Теги идут друг за другом на одном уровне.',
+            abbr: 'h1+p+button',
+            code: '<h1></h1>\n<p></p>\n<button></button>' },
+          { title: 'Подъём ^', desc: 'Выход на уровень выше. Каждый ^ поднимает на один уровень.',
+            abbr: 'div>p^h2',
+            code: '<div>\n  <p></p>\n</div>\n<h2></h2>' },
+          { title: 'Умножение *', desc: 'Повторяет элемент нужное число раз.',
+            abbr: 'ul>li*3',
+            code: '<ul>\n  <li></li>\n  <li></li>\n  <li></li>\n</ul>' },
+          { title: 'Группировка ( )', desc: 'Скобки объединяют часть сокращения в блок. Удобнее, чем ^.',
+            abbr: '(header>nav)+main+footer',
+            code: '<header>\n  <nav></nav>\n</header>\n<main></main>\n<footer></footer>' },
+          { title: 'Группа с умножением', desc: 'Повторяется вся группа целиком.',
+            abbr: '(dt+dd)*2',
+            code: '<dt></dt>\n<dd></dd>\n<dt></dt>\n<dd></dd>' }
+        ]
+      },
+      {
+        id: 'numbering', title: '3. Нумерация $', items: [
+          { title: 'Номер $', desc: 'При умножении $ заменяется на номер копии: 1, 2, 3…',
+            abbr: 'ul>li.item$*3',
+            code: '<ul>\n  <li class="item1"></li>\n  <li class="item2"></li>\n  <li class="item3"></li>\n</ul>' },
+          { title: 'С нулями $$', desc: 'Количество $ задаёт число цифр: $$ → 01, 02.',
+            abbr: 'img[src=photo$$.jpg]*3',
+            code: '<img src="photo01.jpg" alt="">\n<img src="photo02.jpg" alt="">\n<img src="photo03.jpg" alt="">' },
+          { title: 'Обратный счёт $@-', desc: 'Нумерация в обратном порядке.',
+            abbr: 'p{Шаг $@-}*3',
+            code: '<p>Шаг 3</p>\n<p>Шаг 2</p>\n<p>Шаг 1</p>' },
+          { title: 'Начать с числа $@N', desc: 'Счёт начинается с указанного числа.',
+            abbr: 'li{Урок $@5}*3',
+            code: '<li>Урок 5</li>\n<li>Урок 6</li>\n<li>Урок 7</li>' }
+        ]
+      },
+      {
+        id: 'text', title: '4. Текст и lorem', items: [
+          { title: 'Текст { }', desc: 'Фигурные скобки вставляют текст внутрь тега.',
+            abbr: 'button{Отправить}',
+            code: '<button>Отправить</button>' },
+          { title: 'Текст + ссылка', desc: 'Текст и атрибуты можно сочетать.',
+            abbr: 'a[href=#]{Подробнее}',
+            code: '<a href="#">Подробнее</a>' },
+          { title: 'lorem', desc: 'Генерирует текст-«рыбу» (около 30 слов). Каждый раз текст немного разный.',
+            abbr: 'lorem',
+            code: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum...' },
+          { title: 'lorem с числом', desc: 'Число задаёт количество слов.',
+            abbr: 'p>lorem5',
+            code: '<p>Lorem ipsum dolor sit amet.</p>' },
+          { title: 'Несколько абзацев', desc: 'Каждый абзац получит свой текст.',
+            abbr: 'p*3>lorem8',
+            code: '<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>\n<p>Voluptatum, quas. Nemo tempora at officiis eius nihil.</p>\n<p>Quod natus dolorum quia minus explicabo sed rem.</p>' }
+        ]
+      },
+      {
+        id: 'aliases', title: '5. Готовые сокращения', items: [
+          { title: 'Ссылка', desc: 'a:link — внешняя ссылка, a:mail — ссылка на почту.',
+            abbr: 'a:link',
+            code: '<a href="http://"></a>' },
+          { title: 'Ссылка на почту', desc: 'Открывает почтовую программу.',
+            abbr: 'a:mail',
+            code: '<a href="mailto:"></a>' },
+          { title: 'Подключить CSS', desc: 'Пишется внутри <head>.',
+            abbr: 'link:css',
+            code: '<link rel="stylesheet" href="style.css">' },
+          { title: 'Подключить JS', desc: 'Скрипт из внешнего файла.',
+            abbr: 'script:src',
+            code: '<script src=""><\/script>' },
+          { title: 'Картинка', desc: 'Сразу с атрибутами src и alt.',
+            abbr: 'img',
+            code: '<img src="" alt="">' },
+          { title: 'Поля ввода', desc: 'input:text (inp), input:p — пароль, input:email, input:c — флажок, input:r — переключатель.',
+            abbr: 'input:p',
+            code: '<input type="password" name="" id="">' },
+          { title: 'Форма', desc: 'form:get и form:post — форма с методом отправки.',
+            abbr: 'form:post',
+            code: '<form action="" method="post"></form>' },
+          { title: 'Кнопка отправки', desc: 'btn:s — submit, btn:r — reset.',
+            abbr: 'btn:s',
+            code: '<button type="submit"></button>' },
+          { title: 'Плюс + в конце', desc: 'Создаёт тег сразу с вложенными: ul+, ol+, dl+, table+, select+.',
+            abbr: 'table+',
+            code: '<table>\n  <tr>\n    <td></td>\n  </tr>\n</table>' },
+          { title: 'Короткие имена', desc: 'bq — blockquote, hdr — header, ftr — footer, sect — section, art — article, str — strong.',
+            abbr: 'hdr+sect+ftr',
+            code: '<header></header>\n<section></section>\n<footer></footer>' }
+        ]
+      },
+      {
+        id: 'practice', title: '6. Примеры из практики', items: [
+          { title: 'Меню сайта', desc: 'Навигация из 4 пунктов со ссылками.',
+            abbr: 'nav>ul>li*4>a[href=#]{Пункт $}',
+            code: '<nav>\n  <ul>\n    <li><a href="#">Пункт 1</a></li>\n    <li><a href="#">Пункт 2</a></li>\n    <li><a href="#">Пункт 3</a></li>\n    <li><a href="#">Пункт 4</a></li>\n  </ul>\n</nav>' },
+          { title: 'Меню с классами BEM', desc: 'Классы по методологии BEM: блок__элемент.',
+            abbr: 'ul.menu>li.menu__item*3>a.menu__link',
+            code: '<ul class="menu">\n  <li class="menu__item"><a href="" class="menu__link"></a></li>\n  <li class="menu__item"><a href="" class="menu__link"></a></li>\n  <li class="menu__item"><a href="" class="menu__link"></a></li>\n</ul>' },
+          { title: 'Карточка товара', desc: 'Картинка, заголовок, текст и кнопка.',
+            abbr: '.card>img+h3{Товар}+p>lorem6^button{Купить}',
+            code: '<div class="card">\n  <img src="" alt="">\n  <h3>Товар</h3>\n  <p>Lorem ipsum dolor sit amet consectetur.</p>\n  <button>Купить</button>\n</div>' },
+          { title: 'Форма регистрации', desc: 'Три пары «подпись + поле» и кнопка.',
+            abbr: 'form>(label+input)*3+btn:s{Отправить}',
+            code: '<form action="">\n  <label for=""></label>\n  <input type="text">\n  <label for=""></label>\n  <input type="text">\n  <label for=""></label>\n  <input type="text">\n  <button type="submit">Отправить</button>\n</form>' },
+          { title: 'Таблица', desc: 'Строка заголовков и две строки данных.',
+            abbr: 'table>tr>th*3^tr*2>td*3',
+            code: '<table>\n  <tr>\n    <th></th>\n    <th></th>\n    <th></th>\n  </tr>\n  <tr>\n    <td></td>\n    <td></td>\n    <td></td>\n  </tr>\n  <tr>\n    <td></td>\n    <td></td>\n    <td></td>\n  </tr>\n</table>' },
+          { title: 'Макет страницы', desc: 'Шапка с логотипом и меню, контент, подвал.',
+            abbr: 'header>.logo+nav^main>section*2^footer>p{© 2026}',
+            code: '<header>\n  <div class="logo"></div>\n  <nav></nav>\n</header>\n<main>\n  <section></section>\n  <section></section>\n</main>\n<footer>\n  <p>© 2026</p>\n</footer>' }
+        ]
+      },
+      {
+        id: 'css', title: '7. Emmet в CSS', items: [
+          { title: 'Отступы', desc: 'm — margin, p — padding. Число без единиц — это px.',
+            abbr: 'm10',
+            code: 'margin: 10px;' },
+          { title: 'Несколько значений', desc: 'Значения разделяются дефисом.',
+            abbr: 'p10-20',
+            code: 'padding: 10px 20px;' },
+          { title: 'Центрирование блока', desc: 'a — auto.',
+            abbr: 'm0-a',
+            code: 'margin: 0 auto;' },
+          { title: 'Единицы измерения', desc: 'p — %, e — em. Без буквы — px.',
+            abbr: 'w100p',
+            code: 'width: 100%;' },
+          { title: 'Несколько свойств +', desc: 'Плюс разворачивает сразу несколько свойств.',
+            abbr: 'w200+h100',
+            code: 'width: 200px;\nheight: 100px;' },
+          { title: 'Display', desc: 'db — block, dib — inline-block, df — flex, dg — grid, dn — none.',
+            abbr: 'df',
+            code: 'display: flex;' },
+          { title: 'Flexbox', desc: 'jcc / jcsb — justify-content, aic — align-items, fdc — flex-direction: column.',
+            abbr: 'df+jcsb+aic',
+            code: 'display: flex;\njustify-content: space-between;\nalign-items: center;' },
+          { title: 'Шрифт', desc: 'fz — font-size, fwb — font-weight: bold, lh — line-height.',
+            abbr: 'fz18+fwb+lh1.5',
+            code: 'font-size: 18px;\nfont-weight: bold;\nline-height: 1.5;' },
+          { title: 'Цвета', desc: 'c — color, bgc — background-color. Цвет пишется после #.',
+            abbr: 'c#333+bgc#f2f4f8',
+            code: 'color: #333;\nbackground-color: #f2f4f8;' },
+          { title: 'Текст', desc: 'tac — text-align: center, tdn — text-decoration: none, ttu — text-transform: uppercase.',
+            abbr: 'tac+tdn+ttu',
+            code: 'text-align: center;\ntext-decoration: none;\ntext-transform: uppercase;' },
+          { title: 'Рамка и скругление', desc: 'bd — border (s — solid), bdrs — border-radius.',
+            abbr: 'bd1-s-#ccc+bdrs8',
+            code: 'border: 1px solid #ccc;\nborder-radius: 8px;' },
+          { title: 'Позиционирование', desc: 'posr — relative, posa — absolute, posf — fixed. t, r, b, l — top, right, bottom, left.',
+            abbr: 'posa+t0+l0',
+            code: 'position: absolute;\ntop: 0;\nleft: 0;' },
+          { title: '!important', desc: 'Восклицательный знак в конце добавляет !important.',
+            abbr: 'dn!',
+            code: 'display: none !important;' }
+        ]
+      },
+      {
+        id: 'vscode', title: '8. Полезные команды Emmet в VS Code', items: [
+          { title: 'Обернуть в теги', desc: 'Выделите строки → Ctrl+Shift+P → «Emmet: Wrap with Abbreviation». Знак * в конце оборачивает каждую строку отдельно.',
+            abbr: 'ul>li*',
+            code: 'Было:\nЯблоко\nБанан\n\nСтало:\n<ul>\n  <li>Яблоко</li>\n  <li>Банан</li>\n</ul>' },
+          { title: 'Удалить тег', desc: 'Ctrl+Shift+P → «Emmet: Remove Tag». Удаляет тег, а содержимое оставляет.',
+            abbr: 'Remove Tag',
+            code: 'Было:  <div><p>Текст</p></div>\nСтало: <p>Текст</p>' },
+          { title: 'Переименовать тег', desc: 'Ctrl+Shift+P → «Emmet: Update Tag». Меняет открывающий и закрывающий тег сразу.',
+            abbr: 'Update Tag',
+            code: 'Было:  <div>Текст</div>\nСтало: <section>Текст</section>' },
+          { title: 'Выделить тег целиком', desc: 'Ctrl+Shift+P → «Emmet: Balance (outward)». Каждый вызов расширяет выделение на уровень выше.',
+            abbr: 'Balance (outward)',
+            code: '<ul>\n  <li>|курсор здесь|</li>\n</ul>\n\n1-й вызов → содержимое li\n2-й вызов → весь <li>...</li>\n3-й вызов → весь <ul>...</ul>' },
+          { title: 'Перейти к парному тегу', desc: 'Ctrl+Shift+P → «Emmet: Go to Matching Pair». Прыжок между открывающим и закрывающим тегом.',
+            abbr: 'Go to Matching Pair',
+            code: '<div>   ← курсор прыгает сюда\n  ...\n</div>  ← и обратно' }
+        ]
+      }
+    ];
+
+    const app = document.getElementById('app');
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    sections.forEach(function (sec) {
+      const h = document.createElement('h2');
+      h.className = 'section';
+      h.id = sec.id;
+      h.textContent = sec.title;
+      app.appendChild(h);
+
+      sec.items.forEach(function (it) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML =
+          '<div class="info">' +
+            '<div class="title">' + escapeHtml(it.title) + '</div>' +
+            '<div class="desc">' + escapeHtml(it.desc) + '</div>' +
+          '</div>' +
+          '<div class="abbr"><div class="label">Пишем</div><pre>' + escapeHtml(it.abbr) + '</pre></div>' +
+          '<div class="result"><div class="label">Получаем</div><pre>' + escapeHtml(it.code) + '</pre></div>';
+        app.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>
